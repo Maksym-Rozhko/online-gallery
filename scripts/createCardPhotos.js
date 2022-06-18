@@ -1,6 +1,22 @@
 import { createElem } from "./createElem.js";
 
-export const createCardPhotos = data => {
+const loadImage = (url, description) => {
+    return new Promise((res, rej) => {
+        const img = new Image();
+        img.width = 200;
+        img.src = url;
+        img.alt = description;
+
+        img.addEventListener('load', () => {
+            res(img)
+        });
+        img.addEventListener('error', (err) => {
+            rej(new Error(err))
+        });
+    })
+};
+
+export const createCardPhotos = async data => {
     const card = createElem('li', {
        className: 'card',
        style: 'min-height: 300px',
@@ -12,10 +28,7 @@ export const createCardPhotos = data => {
         href: `page.html?photo=${data.id}`,
      });
 
-    const photo = new Image();
-    photo.width = '200';
-    photo.src = data.urls.small;
-    photo.alt = data.alt_description;
+    const photo = await loadImage(data.urls.small, data.alt_description);
 
     const author = createElem('a', {
         className: 'card__author',
